@@ -10,12 +10,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 class LocationsApplicationTests {
 
-	@Autowired
-	private LocationController locationController;
+    @Autowired
+    private LocationController locationController;
 
-	@Test
-	void contextLoads() {
-		assertThat(locationController).isNotNull();
-	}
+    @Test
+    void contextLoads() {
+        assertThat(locationController).isNotNull();
+    }
 
 }
