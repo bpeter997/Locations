@@ -11,10 +11,13 @@ public class LocationService {
 
     List<Location> locations = new LinkedList<>();
 
-    public List<Location> getLocations() {
+    public LocationService() {
         Location location1 = Location.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build();
         Location location2 = Location.builder().id((long) 2.0).name("Delhi").lat(1.0).lon(1.0).build();
         locations.addAll(Stream.of(location1, location2).toList());
+    }
+
+    public List<Location> getLocations() {
         return locations;
     }
 }

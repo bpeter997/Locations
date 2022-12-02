@@ -10,11 +10,4 @@ public class LocationsApplication {
         SpringApplication.run(LocationsApplication.class, args);
     }
 
-/*
-    @Bean
-    public LocationService LocationService() {
-        return new LocationService();
-    }
-*/
-
 }
