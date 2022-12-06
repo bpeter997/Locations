@@ -13,7 +13,7 @@ public class LocationService {
 
     public LocationService() {
         Location location1 = Location.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build();
-        Location location2 = Location.builder().id((long) 2.0).name("Delhi").lat(1.0).lon(1.0).build();
+        Location location2 = Location.builder().id((long) 2.0).name("NewDelhi").lat(1.0).lon(1.0).build();
         locations.addAll(Stream.of(location1, location2).toList());
     }
 
