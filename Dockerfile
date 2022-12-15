@@ -1,12 +1,14 @@
 FROM amazoncorretto:17.0.5-alpine as builder
-WORKDIR app
-COPY target/*.jar locations.jar
-RUN jar xvf locations.jar
+WORKDIR application
+COPY target/employees-0.0.1-SNAPSHOT.jar employees.jar
+
+RUN java -Djarmode=layertools -jar employees.jar extract
 
 FROM amazoncorretto:17.0.5-alpine
-WORKDIR app
-COPY --from=builder app/BOOT-INF/lib lib
-COPY --from=builder app/META-INF META-INF
-COPY --from=builder app/BOOT-INF/classes classes
-
-CMD ["java", "-cp", "classes:lib/*", "com.learn.locations.LocationsApplication"]
+WORKDIR application
+COPY --from=builder application/dependencies/ ./
+COPY --from=builder application/spring-boot-loader/ ./
+COPY --from=builder application/snapshot-dependencies/ ./
+COPY --from=builder application/application/ ./
+CMD ["java", \
+"org.springframework.boot.loader.JarLauncher"]
