@@ -16,10 +16,9 @@ import org.springframework.stereotype.Service;
 public class LocationService {
 
   @Autowired private final ModelMapper modelMapper;
+  private final AtomicLong idGenerator = new AtomicLong();
   List<Location> locations = new LinkedList<>();
   Type targetListType = new TypeToken<List<LocationDto>>() {}.getType();
-
-  private final AtomicLong idGenerator = new AtomicLong();
 
   public LocationService(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
