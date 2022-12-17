@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.modelmapper.ModelMapper;
@@ -18,12 +19,24 @@ public class LocationService {
   List<Location> locations = new LinkedList<>();
   Type targetListType = new TypeToken<List<LocationDto>>() {}.getType();
 
+  private AtomicLong idGenerator = new AtomicLong();
+
   public LocationService(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
     Location location1 =
-        Location.builder().id((long) 1.0).name("Budapest").lat(120.0).lon(229.0).build();
+        Location.builder()
+            .id(idGenerator.incrementAndGet())
+            .name("Budapest")
+            .lat(120.0)
+            .lon(229.0)
+            .build();
     Location location2 =
-        Location.builder().id((long) 2.0).name("NewDelhi").lat(200.0).lon(300.0).build();
+        Location.builder()
+            .id(idGenerator.incrementAndGet())
+            .name("NewDelhi")
+            .lat(200.0)
+            .lon(300.0)
+            .build();
     locations.addAll(Stream.of(location1, location2).toList());
   }
 
@@ -63,5 +76,33 @@ public class LocationService {
     List<Location> locationByName =
         locations.stream().filter(location -> location.getId().equals(id)).toList();
     return modelMapper.map(locationByName, targetListType);
+  }
+
+  public LocationDto createLocation(CreateLocationCommand locationCommand) {
+    Location location = modelMapper.map(locationCommand, Location.class);
+    location.setId(idGenerator.incrementAndGet());
+    locations.add(location);
+    return modelMapper.map(location, LocationDto.class);
+  }
+
+  public LocationDto updateLocation(long id, UpdateLocationCommand locationCommand)
+      throws Exception {
+    Location location = getLocationById(id);
+    location.setLat(locationCommand.getLat());
+    location.setLon(locationCommand.getLon());
+    location.setName(locationCommand.getName());
+    return modelMapper.map(location, LocationDto.class);
+  }
+
+  private Location getLocationById(long id) throws Exception {
+    return locations.stream()
+        .filter(l -> l.getId() == id)
+        .findFirst()
+        .orElseThrow(() -> new Exception("Not found"));
+  }
+
+  public void deleteLocation(long id) throws Exception {
+    Location location = getLocationById(id);
+    locations.remove(location);
   }
 }
