@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
-public class Location {
+@NoArgsConstructor
+@AllArgsConstructor
+public class LocationDto {
     private Long id;
     private String name;
     private double lat;
-    private  double lon;
+    private double lon;
 }

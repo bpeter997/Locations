@@ -22,8 +22,9 @@ class LocationControllerTest {
 
     @Test
     void testGetLocations() {
-        when(locationService.getLocations()).thenReturn(Stream.of(Location.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build()).toList());
-        assertThat(locationController.getLocations().get(0)).isEqualTo(Location.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build());
-
+        when(locationService.getLocations(null)).thenReturn(Stream.of(LocationDto.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build()).toList());
+        assertThat(locationController.getLocations(null).get(0)).isEqualTo(LocationDto.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build());
     }
+
+
 }
