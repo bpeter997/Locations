@@ -104,4 +104,8 @@ public class LocationService {
     Location location = filterLocationById(id);
     locations.remove(location);
   }
+
+  void deleteAllLocation() {
+    this.locations.clear();
+  }
 }
