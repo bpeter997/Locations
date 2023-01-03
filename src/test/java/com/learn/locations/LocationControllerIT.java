@@ -41,8 +41,8 @@ class LocationControllerIT {
 
   @Test
   void testGetLocationsById() {
-    List<LocationDto> locations = locationController.getLocationById((long) 1.0);
-    assertThat(locations.get(0))
+    LocationDto location = locationController.getLocationById((long) 1.0);
+    assertThat(location)
         .isEqualTo(LocationDto.builder().id((long) 1.0).name("Budapest").lat(1.0).lon(1.0).build());
   }
 }

@@ -56,6 +56,15 @@ public class LocationService {
             && (maxLon.isEmpty() || location.getLon() <= maxLon.get());
   }
 
+  private Location filterLocationById(long id) {
+    return locations.stream()
+        .filter(l -> l.getId() == id)
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new LocationNotFoundException(String.format("Location with id %d not found", id)));
+  }
+
   public List<LocationDto> getLocations(
       Optional<String> name,
       Optional<Double> minLat,
@@ -71,10 +80,9 @@ public class LocationService {
     return modelMapper.map(locationByName, targetListType);
   }
 
-  public List<LocationDto> getLocationById(Long id) {
-    List<Location> locationByName =
-        locations.stream().filter(location -> location.getId().equals(id)).toList();
-    return modelMapper.map(locationByName, targetListType);
+  public LocationDto getLocationById(Long id) {
+    Location location = filterLocationById(id);
+    return modelMapper.map(location, LocationDto.class);
   }
 
   public LocationDto createLocation(CreateLocationCommand locationCommand) {
@@ -84,24 +92,16 @@ public class LocationService {
     return modelMapper.map(location, LocationDto.class);
   }
 
-  public LocationDto updateLocation(long id, UpdateLocationCommand locationCommand)
-      throws Exception {
-    Location location = getLocationById(id);
+  public LocationDto updateLocation(long id, UpdateLocationCommand locationCommand) {
+    Location location = filterLocationById(id);
     location.setLat(locationCommand.getLat());
     location.setLon(locationCommand.getLon());
     location.setName(locationCommand.getName());
     return modelMapper.map(location, LocationDto.class);
   }
 
-  private Location getLocationById(long id) throws Exception {
-    return locations.stream()
-        .filter(l -> l.getId() == id)
-        .findFirst()
-        .orElseThrow(() -> new Exception("Not found"));
-  }
-
-  public void deleteLocation(long id) throws Exception {
-    Location location = getLocationById(id);
+  public void deleteLocation(long id) {
+    Location location = filterLocationById(id);
     locations.remove(location);
   }
 }

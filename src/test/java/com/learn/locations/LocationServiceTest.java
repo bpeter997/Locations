@@ -39,8 +39,8 @@ class LocationServiceTest extends LocationsTestHelper {
   @Test
   void testGetLocationById() {
     LocationService locationService = new LocationService(new ModelMapper());
-    List<LocationDto> locations = locationService.getLocationById((long) 1.0);
-    assertThat(locations.get(0)).isEqualTo(generateLocationDto(1, "Budapest", 120, 229));
+    LocationDto location = locationService.getLocationById((long) 1.0);
+    assertThat(location).isEqualTo(generateLocationDto(1, "Budapest", 120, 229));
   }
 
   @Test
