@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 
 class LocationServiceTest extends LocationsTestHelper {
 
+  LocationService locationService = new LocationService(new LocationMapperImpl());
+
   @Test
   void testGetLocations() {
-    LocationService locationService = new LocationService(new ModelMapper());
     List<LocationDto> locations =
         locationService.getLocations(
             Optional.empty(),
@@ -25,7 +25,6 @@ class LocationServiceTest extends LocationsTestHelper {
 
   @Test
   void testGetLocationByName() {
-    LocationService locationService = new LocationService(new ModelMapper());
     List<LocationDto> locations =
         locationService.getLocations(
             "Budape".describeConstable(),
@@ -38,14 +37,12 @@ class LocationServiceTest extends LocationsTestHelper {
 
   @Test
   void testGetLocationById() {
-    LocationService locationService = new LocationService(new ModelMapper());
     LocationDto location = locationService.getLocationById((long) 1.0);
     assertThat(location).isEqualTo(generateLocationDto(1, "Budapest", 120, 229));
   }
 
   @Test
   void testGetLocationByLonInterval() {
-    LocationService locationService = new LocationService(new ModelMapper());
     List<LocationDto> locations =
         locationService.getLocations(
             Optional.empty(),

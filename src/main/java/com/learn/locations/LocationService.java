@@ -1,27 +1,25 @@
 package com.learn.locations;
 
-import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LocationService {
 
-  @Autowired private final ModelMapper modelMapper;
   private final AtomicLong idGenerator = new AtomicLong();
   List<Location> locations = new LinkedList<>();
-  Type targetListType = new TypeToken<List<LocationDto>>() {}.getType();
 
-  public LocationService(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
+  @Autowired
+  private final LocationMapper locationMapper;
+
+  public LocationService(LocationMapper locationMapper) {
+    this.locationMapper = locationMapper;
     Location location1 =
         Location.builder()
             .id(idGenerator.incrementAndGet())
@@ -71,25 +69,25 @@ public class LocationService {
       Optional<Double> minLon,
       Optional<Double> maxLat,
       Optional<Double> maxLon) {
-    List<Location> locationByName =
+    List<Location> filteredLocations =
         locations.stream()
             .filter(filterByName(name))
             .filter(filterByLat(minLat, maxLat))
             .filter(filterByLon(minLon, maxLon))
             .toList();
-    return modelMapper.map(locationByName, targetListType);
+    return locationMapper.locationToLocationDto(filteredLocations);
   }
 
   public LocationDto getLocationById(Long id) {
     Location location = filterLocationById(id);
-    return modelMapper.map(location, LocationDto.class);
+    return locationMapper.locationToLocationDto(location);
   }
 
   public LocationDto createLocation(CreateLocationCommand locationCommand) {
-    Location location = modelMapper.map(locationCommand, Location.class);
+    Location location = locationMapper.createLocationCommandToLocation(locationCommand);
     location.setId(idGenerator.incrementAndGet());
     locations.add(location);
-    return modelMapper.map(location, LocationDto.class);
+    return locationMapper.locationToLocationDto(location);
   }
 
   public LocationDto updateLocation(long id, UpdateLocationCommand locationCommand) {
@@ -97,7 +95,7 @@ public class LocationService {
     location.setLat(locationCommand.getLat());
     location.setLon(locationCommand.getLon());
     location.setName(locationCommand.getName());
-    return modelMapper.map(location, LocationDto.class);
+    return locationMapper.locationToLocationDto(location);
   }
 
   public void deleteLocation(long id) {
