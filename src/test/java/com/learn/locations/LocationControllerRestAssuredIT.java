@@ -1,5 +1,6 @@
 package com.learn.locations;
 
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.with;
 import static org.hamcrest.Matchers.equalTo;
@@ -45,5 +46,14 @@ class LocationControllerRestAssuredIT {
         .statusCode(200)
         .body("[0].name", equalTo("Szeged"))
         .body("size()", equalTo(1));
+  }
+
+  @Test
+  void validateJsonScheme() {
+    with()
+        .body(CreateLocationCommand.builder().name("Szed").lat(15.0).lon(66.0).build())
+        .post("/api/locations")
+        .then()
+        .body(matchesJsonSchemaInClasspath("location-dto-schema.json"));
   }
 }
