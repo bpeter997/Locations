@@ -33,16 +33,16 @@ public class LocationController {
   @Operation(summary = "Get Locations with optional query parameters")
   @ApiResponse(responseCode = "200")
   public List<LocationDto> getLocations(
-      @Schema(description = "name of the location", example = "Budapest")
-      @RequestParam Optional<String> name,
-      @Schema(description = "coordinate lat, minimum", example = "5")
-      @RequestParam Optional<Double> minLat,
-      @Schema(description = "coordinate lon, minimum", example = "5")
-      @RequestParam Optional<Double> minLon,
-      @Schema(description = "coordinate lat, maximum", example = "305")
-      @RequestParam Optional<Double> maxLat,
-      @Schema(description = "coordinate lon, maximum", example = "305")
-      @RequestParam Optional<Double> maxLon) {
+      @Schema(description = "name of the location", example = "Budapest") @RequestParam
+          Optional<String> name,
+      @Schema(description = "coordinate lat, minimum", example = "5") @RequestParam
+          Optional<Double> minLat,
+      @Schema(description = "coordinate lon, minimum", example = "5") @RequestParam
+          Optional<Double> minLon,
+      @Schema(description = "coordinate lat, maximum", example = "305") @RequestParam
+          Optional<Double> maxLat,
+      @Schema(description = "coordinate lon, maximum", example = "305") @RequestParam
+          Optional<Double> maxLon) {
     return locationService.getLocations(name, minLat, minLon, maxLat, maxLon);
   }
 
