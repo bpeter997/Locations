@@ -27,6 +27,17 @@ class LocationControllerWebClientIT {
         .isEqualTo("Szeged");
   }
 
+  @Test()
+  void testCreateLocationValidationError() {
+    webTestClient
+        .post()
+        .uri("/api/locations")
+        .bodyValue(CreateLocationCommand.builder().name("").lon(35.0).lat(74.0).build())
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
+  }
+
   @Test
   void testFindEmployeeById() {
     webTestClient

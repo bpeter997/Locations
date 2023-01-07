@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -59,7 +60,7 @@ public class LocationController {
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create a location")
   @ApiResponse(responseCode = "201", description = "Location was created.")
-  public LocationDto createLocation(@RequestBody CreateLocationCommand locationCommand) {
+  public LocationDto createLocation(@Valid @RequestBody CreateLocationCommand locationCommand) {
     return locationService.createLocation(locationCommand);
   }
 
@@ -69,7 +70,7 @@ public class LocationController {
   @ApiResponse(responseCode = "200", description = "Location was updated.")
   @ApiResponse(responseCode = "404", description = "Location has not been found")
   public LocationDto updateLocation(
-      @PathVariable("id") long id, @RequestBody UpdateLocationCommand locationCommand) {
+      @PathVariable("id") long id, @Valid @RequestBody UpdateLocationCommand locationCommand) {
     return locationService.updateLocation(id, locationCommand);
   }
 
