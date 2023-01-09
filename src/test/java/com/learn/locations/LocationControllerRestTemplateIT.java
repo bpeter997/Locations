@@ -16,8 +16,6 @@ class LocationControllerRestTemplateIT {
 
   @Autowired TestRestTemplate template;
 
-  @Autowired LocationService locationService;
-
   @Test
   void testGetLocations() {
 

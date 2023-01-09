@@ -20,8 +20,6 @@ class LocationControllerRestAssuredIT {
 
   @Autowired MockMvc mockMvc;
 
-  @Autowired LocationService locationService;
-
   @BeforeEach
   void init() {
     RestAssuredMockMvc.mockMvc(mockMvc);

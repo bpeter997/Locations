@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 class LocationServiceTest extends LocationsTestHelper {
 
-  LocationMapper locationMapper;
+  LocationMapperImpl locationMapper;
   LocationService locationService;
 
   @Mock LocationRepository locationRepository;
