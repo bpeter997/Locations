@@ -1,46 +1,23 @@
 package com.learn.locations;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class LocationService {
 
-  private final AtomicLong idGenerator = new AtomicLong();
-  @Autowired private final LocationMapper locationMapper;
-  List<Location> locations = new LinkedList<>();
-  private final boolean upperCase;
+  private final LocationMapper locationMapper;
 
-  public LocationService(
-      LocationMapper locationMapper, @Value("${name.uppercase}") String uppercase) {
-    this.locationMapper = locationMapper;
-    this.upperCase = Objects.equals(uppercase, "true");
-    Location location1 =
-        Location.builder()
-            .id(idGenerator.incrementAndGet())
-            .name("Budapest")
-            .lat(120.0)
-            .lon(229.0)
-            .build();
-    Location location2 =
-        Location.builder()
-            .id(idGenerator.incrementAndGet())
-            .name("NewDelhi")
-            .lat(200.0)
-            .lon(300.0)
-            .build();
-    locations.addAll(Stream.of(location1, location2).toList());
-  }
+  private final LocationRepository locationRepository;
+
 
   private static Predicate<Location> filterByName(Optional<String> name) {
     return location ->
@@ -59,13 +36,8 @@ public class LocationService {
             && (maxLon.isEmpty() || location.getLon() <= maxLon.get());
   }
 
-  private Location filterLocationById(long id) {
-    return locations.stream()
-        .filter(l -> l.getId() == id)
-        .findFirst()
-        .orElseThrow(
-            () ->
-                new LocationNotFoundException(String.format("Location with id %d not found", id)));
+  private static Supplier<LocationNotFoundException> getLocationNotFoundExceptionSupplier(Long id) {
+    return () -> new LocationNotFoundException(String.format("Location with id %d not found", id));
   }
 
   public List<LocationDto> getLocations(
@@ -74,6 +46,10 @@ public class LocationService {
       Optional<Double> minLon,
       Optional<Double> maxLat,
       Optional<Double> maxLon) {
+    List<Location> locations = locationRepository.findAll();
+    if (locations.isEmpty()) {
+      throw new LocationNotFoundException("Locations not found");
+    }
     List<Location> filteredLocations =
         locations.stream()
             .filter(filterByName(name))
@@ -84,35 +60,33 @@ public class LocationService {
   }
 
   public LocationDto getLocationById(Long id) {
-    Location location = filterLocationById(id);
+    Location location =
+        locationRepository.findById(id).orElseThrow(getLocationNotFoundExceptionSupplier(id));
     return locationMapper.locationToLocationDto(location);
   }
 
   public LocationDto createLocation(CreateLocationCommand locationCommand) {
     Location location = locationMapper.createLocationCommandToLocation(locationCommand);
-    location.setId(idGenerator.incrementAndGet());
-    locations.add(location);
+    locationRepository.save(location);
     log.info("Request with the following id {} is created.", location.getId());
     return locationMapper.locationToLocationDto(location);
   }
 
+  @Transactional
   public LocationDto updateLocation(long id, UpdateLocationCommand locationCommand) {
-    Location location = filterLocationById(id);
+    Location location =
+        locationRepository.findById(id).orElseThrow(getLocationNotFoundExceptionSupplier(id));
+
+    location.setName(locationCommand.getName());
     location.setLat(locationCommand.getLat());
     location.setLon(locationCommand.getLon());
-    location.setName(locationCommand.getName());
-    if (upperCase) location.setName(location.getName().toUpperCase());
-    log.info("Request with the following id {} is updated.", location.getId());
+    locationRepository.save(location);
+    log.info("Request with the following id {} is updated.", id);
     return locationMapper.locationToLocationDto(location);
   }
 
   public void deleteLocation(long id) {
-    Location location = filterLocationById(id);
-    locations.remove(location);
-    log.info("Request with the following id {} is deleted.", location.getId());
-  }
-
-  void deleteAllLocation() {
-    this.locations.clear();
+    locationRepository.deleteById(id);
+    log.info("Request with the following id {} is deleted.", id);
   }
 }

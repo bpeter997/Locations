@@ -21,8 +21,6 @@ class LocationControllerRestTemplateIT {
   @Test
   void testGetLocations() {
 
-    locationService.deleteAllLocation();
-
     LocationDto location =
         template.postForObject(
             "/api/locations",

@@ -27,7 +27,6 @@ class LocationControllerRestAssuredIT {
     RestAssuredMockMvc.mockMvc(mockMvc);
     RestAssuredMockMvc.requestSpecification =
         given().contentType(ContentType.JSON).accept(ContentType.JSON);
-    locationService.deleteAllLocation();
   }
 
   @Test

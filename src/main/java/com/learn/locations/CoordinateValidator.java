@@ -9,7 +9,6 @@ public class CoordinateValidator implements ConstraintValidator<Coordinate, Doub
 
   @Override
   public boolean isValid(Double value, ConstraintValidatorContext constraintValidatorContext) {
-    System.out.println("Beesik ide egyaltalan?");
     if (this.type == CoordinateType.LAT) {
       return value > -90.0 && value < 90.0;
     } else {
@@ -19,7 +18,6 @@ public class CoordinateValidator implements ConstraintValidator<Coordinate, Doub
 
   @Override
   public void initialize(Coordinate constraintAnnotation) {
-    System.out.println("Init van egyaltalan ide egyaltalan?");
     this.type = constraintAnnotation.type();
   }
 }

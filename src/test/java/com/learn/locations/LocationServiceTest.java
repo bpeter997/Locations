@@ -2,14 +2,38 @@ package com.learn.locations;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 class LocationServiceTest extends LocationsTestHelper {
 
-  LocationService locationService = new LocationService(new LocationMapperImpl(), "true");
+  LocationMapper locationMapper;
+  LocationService locationService;
+
+  @Mock LocationRepository locationRepository;
+
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+    locationMapper = new LocationMapperImpl();
+    locationService = new LocationService(locationMapper, locationRepository);
+
+    when(locationRepository.findAll())
+        .thenReturn(
+            Stream.of(generateLocation(1, "Budapest", 120, 229)).collect(Collectors.toList()));
+
+    when(locationRepository.findById(any()))
+        .thenReturn(Optional.ofNullable(generateLocation(1, "Budapest", 120, 229)));
+  }
 
   @Test
   void testGetLocations() {
@@ -50,7 +74,7 @@ class LocationServiceTest extends LocationsTestHelper {
             Optional.empty(),
             Optional.empty(),
             Optional.empty());
-    assertEquals(2, locations.size());
+    assertEquals(1, locations.size());
 
     locations =
         locationService.getLocations(
@@ -59,7 +83,7 @@ class LocationServiceTest extends LocationsTestHelper {
             Optional.empty(),
             Optional.empty(),
             Optional.empty());
-    assertEquals(1, locations.size());
+    assertEquals(0, locations.size());
 
     locations =
         locationService.getLocations(
@@ -68,7 +92,7 @@ class LocationServiceTest extends LocationsTestHelper {
             Optional.empty(),
             Optional.empty(),
             Optional.of(300.0));
-    assertEquals(2, locations.size());
+    assertEquals(1, locations.size());
 
     locations =
         locationService.getLocations(
@@ -86,6 +110,6 @@ class LocationServiceTest extends LocationsTestHelper {
             Optional.of(230.0),
             Optional.of(300.0),
             Optional.of(305.0));
-    assertEquals(1, locations.size());
+    assertEquals(0, locations.size());
   }
 }
