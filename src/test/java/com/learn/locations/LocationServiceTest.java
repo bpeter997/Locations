@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class LocationServiceTest extends LocationsTestHelper {
 
-  LocationService locationService = new LocationService(new LocationMapperImpl());
+  LocationService locationService = new LocationService(new LocationMapperImpl(), "true");
 
   @Test
   void testGetLocations() {

@@ -2,24 +2,29 @@ package com.learn.locations;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class LocationService {
 
   private final AtomicLong idGenerator = new AtomicLong();
+  @Autowired private final LocationMapper locationMapper;
   List<Location> locations = new LinkedList<>();
+  private final boolean upperCase;
 
-  @Autowired
-  private final LocationMapper locationMapper;
-
-  public LocationService(LocationMapper locationMapper) {
+  public LocationService(
+      LocationMapper locationMapper, @Value("${name.uppercase}") String uppercase) {
     this.locationMapper = locationMapper;
+    this.upperCase = Objects.equals(uppercase, "true");
     Location location1 =
         Location.builder()
             .id(idGenerator.incrementAndGet())
@@ -87,6 +92,7 @@ public class LocationService {
     Location location = locationMapper.createLocationCommandToLocation(locationCommand);
     location.setId(idGenerator.incrementAndGet());
     locations.add(location);
+    log.info("Request with the following id {} is created.", location.getId());
     return locationMapper.locationToLocationDto(location);
   }
 
@@ -95,12 +101,15 @@ public class LocationService {
     location.setLat(locationCommand.getLat());
     location.setLon(locationCommand.getLon());
     location.setName(locationCommand.getName());
+    if (upperCase) location.setName(location.getName().toUpperCase());
+    log.info("Request with the following id {} is updated.", location.getId());
     return locationMapper.locationToLocationDto(location);
   }
 
   public void deleteLocation(long id) {
     Location location = filterLocationById(id);
     locations.remove(location);
+    log.info("Request with the following id {} is deleted.", location.getId());
   }
 
   void deleteAllLocation() {
