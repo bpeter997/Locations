@@ -42,14 +42,8 @@
 
     <dependency>
       <groupId>org.zalando</groupId>
-      <artifactId>problem</artifactId>
-      <version>0.27.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.zalando</groupId>
-      <artifactId>jackson-datatype-problem</artifactId>
-      <version>0.27.1</version>
+      <artifactId>problem-spring-web-starter</artifactId>
+      <version>0.27.0</version>
     </dependency>
 
     <dependency>
