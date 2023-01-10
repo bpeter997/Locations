@@ -18,7 +18,6 @@ public class LocationService {
 
   private final LocationRepository locationRepository;
 
-
   private static Predicate<Location> filterByName(Optional<String> name) {
     return location ->
         name.isEmpty() || location.getName().toLowerCase().startsWith(name.get().toLowerCase());
@@ -46,17 +45,12 @@ public class LocationService {
       Optional<Double> minLon,
       Optional<Double> maxLat,
       Optional<Double> maxLon) {
-    List<Location> locations = locationRepository.findAll();
+    List<Location> locations =
+        locationRepository.findAllByParams(name, minLat, minLon, maxLat, maxLon);
     if (locations.isEmpty()) {
       throw new LocationNotFoundException("Locations not found");
     }
-    List<Location> filteredLocations =
-        locations.stream()
-            .filter(filterByName(name))
-            .filter(filterByLat(minLat, maxLat))
-            .filter(filterByLon(minLon, maxLon))
-            .toList();
-    return locationMapper.locationToLocationDto(filteredLocations);
+    return locationMapper.locationToLocationDto(locations);
   }
 
   public LocationDto getLocationById(Long id) {

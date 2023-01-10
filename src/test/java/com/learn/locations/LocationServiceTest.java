@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 class LocationServiceTest extends LocationsTestHelper {
 
@@ -23,7 +22,6 @@ class LocationServiceTest extends LocationsTestHelper {
 
   @BeforeEach
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
     locationMapper = new LocationMapperImpl();
     locationService = new LocationService(locationMapper, locationRepository);
 
