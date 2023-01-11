@@ -45,12 +45,17 @@ public class LocationService {
       Optional<Double> minLon,
       Optional<Double> maxLat,
       Optional<Double> maxLon) {
-    List<Location> locations =
-        locationRepository.findAllByParams(name, minLat, minLon, maxLat, maxLon);
+    List<Location> locations = locationRepository.findAll();
     if (locations.isEmpty()) {
       throw new LocationNotFoundException("Locations not found");
     }
-    return locationMapper.locationToLocationDto(locations);
+    List<Location> filteredLocations =
+        locations.stream()
+            .filter(filterByName(name))
+            .filter(filterByLat(minLat, maxLat))
+            .filter(filterByLon(minLon, maxLon))
+            .toList();
+    return locationMapper.locationToLocationDto(filteredLocations);
   }
 
   public LocationDto getLocationById(Long id) {
