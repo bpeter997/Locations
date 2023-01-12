@@ -88,4 +88,8 @@ public class LocationService {
     locationRepository.deleteById(id);
     log.info("Request with the following id {} is deleted.", id);
   }
+
+  public void deleteAllLocations() {
+    locationRepository.deleteAll();
+  }
 }

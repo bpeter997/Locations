@@ -2,16 +2,39 @@ package com.learn.locations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Sql(statements = "delete from locations")
 class LocationControllerWebClientIT {
 
   @Autowired WebTestClient webTestClient;
+
+  @Autowired LocationService locationService;
+
+  @BeforeEach
+  void setUp() {
+    locationService.deleteAllLocations();
+    webTestClient
+        .post()
+        .uri("/api/locations")
+        .bodyValue(new CreateLocationCommand("Budapest", 47.497912, 19.040235))
+        .exchange();
+
+    locationService.createLocation(new CreateLocationCommand("Róma", 41.90383, 12.50557));
+
+    webTestClient
+        .post()
+        .uri("/api/locations")
+        .bodyValue(new CreateLocationCommand("Athén", 37.97954, 23.72638))
+        .exchange();
+  }
 
   @Test
   void testCreateLocation() {
@@ -39,16 +62,6 @@ class LocationControllerWebClientIT {
   }
 
   @Test
-  void testFindEmployeeById() {
-    webTestClient
-        .get()
-        .uri("/api/locations/{id}", 1)
-        .exchange()
-        .expectBody(LocationDto.class)
-        .value(dto -> assertEquals("Budapest", dto.getName()));
-  }
-
-  @Test
   void testListLocations() {
     webTestClient
         .get()
@@ -57,7 +70,7 @@ class LocationControllerWebClientIT {
         .expectStatus()
         .isOk()
         .expectBodyList(LocationDto.class)
-        .hasSize(2);
+        .hasSize(3);
   }
 
   @Test

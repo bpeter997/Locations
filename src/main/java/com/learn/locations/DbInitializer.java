@@ -12,11 +12,6 @@ public class DbInitializer implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    jdbcTemplate.execute("DROP TABLE IF EXISTS locations");
-
-    jdbcTemplate.execute(
-        "create table locations (id bigint not null auto_increment, latitude double precision, longitude double precision, location_name varchar(255), primary key (id))");
-
     jdbcTemplate.execute(
         "insert into locations (latitude, longitude, location_name) values (47.497912, 19.040235, 'Budapest')");
 
