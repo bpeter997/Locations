@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/locations")
 @Tag(name = "Web operations on locations")
+@PreAuthorize("isAuthenticated()")
 public class LocationController {
   LocationService locationService;
 
@@ -33,6 +35,7 @@ public class LocationController {
   @ResponseStatus(HttpStatus.OK)
   @Operation(summary = "Get Locations with optional query parameters")
   @ApiResponse(responseCode = "200")
+  @PreAuthorize("hasAuthority('locations_app_user')")
   public List<LocationDto> getLocations(
       @Schema(description = "name of the location", example = "Budapest") @RequestParam
           Optional<String> name,

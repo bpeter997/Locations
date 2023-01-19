@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-class LocationControllerTest extends LocationsTestHelper {
+class LocationControllerTests extends LocationsTestHelper {
 
   @InjectMocks LocationController locationController;
 

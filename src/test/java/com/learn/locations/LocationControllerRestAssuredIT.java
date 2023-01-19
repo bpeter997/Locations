@@ -41,8 +41,8 @@ class LocationControllerRestAssuredIT {
         .get("/api/locations")
         .then()
         .statusCode(200)
-        .body("[0].name", equalTo("Szeged"))
-        .body("size()", equalTo(1));
+        .body("[4].name", equalTo("Szeged"))
+        .body("size()", equalTo(5));
   }
 
   @Test
